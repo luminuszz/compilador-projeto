@@ -1,12 +1,10 @@
-# code_generator.py
-
 class CodeGenerator:
     """Traduz TAC (Código de Três Endereços) para Bytecode baseado em pilha."""
 
     def __init__(self, tac):
         self.tac = tac
         self.bytecode = []
-        self.labels = {} # Mapeia nome do label para índice no bytecode
+        self.labels = {}
 
     def is_literal(self, value):
         """Verifica se o valor é um literal (número ou booleano)."""
@@ -27,7 +25,6 @@ class CodeGenerator:
             self.bytecode.append(('LOAD', value))
 
     def generate(self):
-        # Primeira passagem: Gerar bytecode básico e mapear labels
         for instr in self.tac:
             opcode = instr[0]
             arg1 = instr[1]
@@ -60,14 +57,12 @@ class CodeGenerator:
                 self.bytecode.append(('READ', result))
 
             elif opcode == 'JUMP':
-                # Segunda passagem resolverá o endereço
                 self.bytecode.append(('JUMP', result))
 
             elif opcode == 'JUMP_IF_FALSE':
                 self.get_value(arg1)
                 self.bytecode.append(('JUMP_IF_FALSE', result))
 
-        # Segunda passagem: Resolver endereços de labels
         resolved_bytecode = []
         for instr in self.bytecode:
             opcode = instr[0]

@@ -1,5 +1,3 @@
-# vm.py
-
 class VirtualMachine:
     """Máquina Virtual baseada em pilha para executar Bytecode."""
 
@@ -7,9 +5,9 @@ class VirtualMachine:
         self.bytecode = bytecode
         self.stack = []
         self.memory = {}
-        self.pc = 0 # Program Counter
+        self.pc = 0
         self.running = False
-        self.output = [] # Para capturar prints em testes
+        self.output = []
 
     def run(self):
         self.running = True
@@ -71,7 +69,6 @@ class VirtualMachine:
             self.stack.append(a == b)
             
         elif opcode == 'JUMP':
-            # -1 porque o loop principal vai somar 1 ao pc
             self.pc = arg - 1
             
         elif opcode == 'JUMP_IF_FALSE':
@@ -82,11 +79,9 @@ class VirtualMachine:
         elif opcode == 'PRINT':
             val = self.stack.pop()
             self.output.append(str(val))
-            print(val) # Saída real no console
+            print(val)
             
         elif opcode == 'READ':
-            # Em um ambiente real, usaríamos input().
-            # Para testes, podemos permitir injetar uma lista de entradas.
             if hasattr(self, 'inputs') and self.inputs:
                 val = self.inputs.pop(0)
             else:

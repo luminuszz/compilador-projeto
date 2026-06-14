@@ -1,4 +1,3 @@
-# tests/test_parser.py
 import unittest
 import sys
 import os

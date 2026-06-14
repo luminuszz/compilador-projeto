@@ -1,4 +1,3 @@
-# optimizer.py
 from parser_ import Numero, Booleano, OperacaoBinaria
 
 class Optimizer:
@@ -15,8 +14,6 @@ class Optimizer:
         return node
 
     def visit_Programa(self, node):
-        node.declaracoes = [self.visit(stmt) for statement in node.declaracoes for stmt in [statement]]
-        # A linha acima é um hack simples para manter a lista original, vamos simplificar:
         new_stmts = []
         for stmt in node.declaracoes:
             new_stmts.append(self.visit(stmt))
@@ -53,11 +50,9 @@ class Optimizer:
         return node
 
     def visit_OperacaoBinaria(self, node):
-        # 1. Tenta otimizar os filhos primeiro
         node.esquerda = self.visit(node.esquerda)
         node.direita = self.visit(node.direita)
 
-        # 2. Se ambos os filhos forem Numero, faz Constant Folding
         if isinstance(node.esquerda, Numero) and isinstance(node.direita, Numero):
             v1 = node.esquerda.valor
             v2 = node.direita.valor
@@ -69,14 +64,11 @@ class Optimizer:
             elif op == 'MULT': res = v1 * v2
             elif op == 'DIV': res = v1 // v2 if v2 != 0 else 0
             
-            # Se foi uma operação aritmética, retorna um novo nó Numero
             if res is not None:
-                # Criamos um novo token falso para o nó Numero (apenas para manter compatibilidade)
                 from lexer import Token
                 new_token = Token('NUMERO', str(res), node.esquerda.token.line, node.esquerda.token.column)
                 return Numero(new_token)
 
-            # Se for uma operação de comparação
             comp_res = None
             if op == 'MAIOR': comp_res = v1 > v2
             elif op == 'MENOR': comp_res = v1 < v2

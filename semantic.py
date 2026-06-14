@@ -1,28 +1,16 @@
-# semantic.py
-
-# Futuramente, importaremos os nós da AST do parser_.py
-# from parser_ import ASTNode, ...
-
-
 class SemanticError(Exception):
     """Exceção para erros semânticos."""
-
     pass
-
 
 class Symbol:
     """Representa um símbolo na tabela (variável, função, etc.)."""
-
     def __init__(self, name, type):
         self.name = name
         self.type = type
 
-
 class SymbolTable:
     """Gerencia os símbolos e escopos."""
-
     def __init__(self):
-        # A tabela é uma lista de dicionários, representando a pilha de escopos
         self.scopes = [{}]
 
     def enter_scope(self):
@@ -49,24 +37,19 @@ class SymbolTable:
                 return scope[name]
         return None
 
-
 class SemanticAnalyzer:
     """Percorre a AST e realiza a análise semântica."""
-
     def __init__(self):
         self.symtab = SymbolTable()
 
     def visit(self, node):
         """Método de despacho para visitar o nó correto."""
         method_name = f"visit_{node.__class__.__name__}"
-        # getattr(object, name, default)
         visitor = getattr(self, method_name, self.generic_visit)
         return visitor(node)
 
     def generic_visit(self, node):
         """Método genérico para visitar nós que não têm um método 'visit_' específico."""
-        # Esta é uma abordagem simples; pode ser necessário torná-la mais robusta
-        # para percorrer todos os filhos de um nó genérico.
         raise Exception(f"Nenhum método visit_{node.__class__.__name__} encontrado")
 
     def visit_Programa(self, node):
@@ -75,34 +58,28 @@ class SemanticAnalyzer:
         return None
 
     def visit_DeclaracaoVariavel(self, node):
-        # 1. Obtém o tipo da expressão à direita
         received_type = None
         if node.expressao:
             received_type = self.visit(node.expressao)
 
-        # 2. Verifica se o tipo recebido é compatível com o tipo declarado
-        expected_type = node.tipo.type  # 'INT' ou 'BOOL'
+        expected_type = node.tipo.type
         if received_type and received_type != expected_type:
             raise SemanticError(
                 f"Erro: Tipo incompatível para a variável '{node.nome_variavel.nome}'. Esperado '{expected_type}', mas recebeu '{received_type}'."
             )
 
-        # 3. Declara a nova variável na tabela de símbolos
         symbol = Symbol(name=node.nome_variavel.nome, type=expected_type)
         self.symtab.declare(symbol)
         return expected_type
 
     def visit_Atribuicao(self, node):
-        # 1. Verifica se a variável foi declarada
         symbol_name = node.nome_variavel.nome
         symbol = self.symtab.lookup(symbol_name)
         if not symbol:
             raise SemanticError(f"Erro: Variável '{symbol_name}' não declarada.")
 
-        # 2. Obtém o tipo da nova expressão
         received_type = self.visit(node.expressao)
 
-        # 3. Verifica compatibilidade de tipos
         if symbol.type != received_type:
             raise SemanticError(
                 f"Erro: Tipo incompatível na atribuição para '{symbol_name}'. Esperado '{symbol.type}', mas recebeu '{received_type}'."
@@ -115,20 +92,16 @@ class SemanticAnalyzer:
         return None
 
     def visit_ComandoRead(self, node):
-        # Verifica se a variável de destino existe
         symbol_name = node.nome_variavel.nome
         if not self.symtab.lookup(symbol_name):
             raise SemanticError(f"Erro: Variável '{symbol_name}' não declarada.")
         return None
 
     def visit_OperacaoBinaria(self, node):
-        # Visita ambos os lados e obtém seus tipos
         type_left = self.visit(node.esquerda)
         type_right = self.visit(node.direita)
-
         op_type = node.op.type
 
-        # Lógica de tipos para operadores aritméticos
         if op_type in ("MAIS", "MENOS", "MULT", "DIV"):
             if type_left == "INT" and type_right == "INT":
                 return "INT"
@@ -137,7 +110,6 @@ class SemanticAnalyzer:
                     f"Erro: Operação aritmética '{op_type}' exige operandos do tipo 'INT'."
                 )
 
-        # Lógica de tipos para operadores de comparação
         if op_type in ("MAIOR", "MENOR", "MAIOR_IGUAL", "MENOR_IGUAL"):
             if type_left == "INT" and type_right == "INT":
                 return "BOOL"
@@ -146,7 +118,6 @@ class SemanticAnalyzer:
                     f"Erro: Operação de comparação '{op_type}' exige operandos do tipo 'INT'."
                 )
 
-        # Lógica de tipos para igualdade
         if op_type in ("IGUAL_COMP", "DIFERENTE"):
             if type_left == type_right:
                 return "BOOL"
@@ -158,7 +129,6 @@ class SemanticAnalyzer:
         return None
 
     def visit_ComandoIf(self, node):
-        # A condição do IF DEVE ser booleana
         cond_type = self.visit(node.condicao)
         if cond_type != "BOOL":
             raise SemanticError(
@@ -171,7 +141,6 @@ class SemanticAnalyzer:
         return None
 
     def visit_ComandoWhile(self, node):
-        # A condição do WHILE DEVE ser booleana
         cond_type = self.visit(node.condicao)
         if cond_type != "BOOL":
             raise SemanticError(

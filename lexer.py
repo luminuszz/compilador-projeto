@@ -1,5 +1,3 @@
-# lexer.py
-
 import re
 
 class Token:
@@ -20,7 +18,6 @@ class Lexer:
         self.code = code
         self.line = 1
         self.column = 1
-        # A ordem é importante: palavras-chave antes de identificadores
         self.token_specs = [
             ('COMENTARIO',  r'//[^\n]*'),
             ('NOVALINHA',   r'\n'),
@@ -76,11 +73,9 @@ class Lexer:
                 tokens.append(Token(kind, value, self.line, self.column))
                 self.column += len(value)
             else:
-                # Espaços e comentários atualizam a coluna mas não geram token
                 self.column += len(value)
 
             self.code = self.code[match.end():]
         
         tokens.append(Token('EOF', '', self.line, self.column))
         return tokens
-

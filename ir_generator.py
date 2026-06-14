@@ -1,5 +1,3 @@
-# ir_generator.py
-
 class IRGenerator:
     """Gera Código de Três Endereços (TAC) a partir da AST."""
 
@@ -57,22 +55,16 @@ class IRGenerator:
         label_false = self.new_label()
         label_end = self.new_label()
 
-        # Avalia a condição
         cond_res = self.visit(node.condicao)
-        
-        # Se for falso, pula para o ELSE (ou END se não houver ELSE)
         self.instructions.append(('JUMP_IF_FALSE', cond_res, None, label_false))
         
-        # Bloco THEN
         self.visit(node.bloco_then)
         self.instructions.append(('JUMP', None, None, label_end))
         
-        # Bloco ELSE
         self.instructions.append(('LABEL', label_false, None, None))
         if node.bloco_else:
             self.visit(node.bloco_else)
             
-        # FIM
         self.instructions.append(('LABEL', label_end, None, None))
         return None
 
@@ -80,22 +72,14 @@ class IRGenerator:
         label_start = self.new_label()
         label_end = self.new_label()
 
-        # Início do laço
         self.instructions.append(('LABEL', label_start, None, None))
         
-        # Avalia a condição
         cond_res = self.visit(node.condicao)
-        
-        # Se for falso, sai do laço
         self.instructions.append(('JUMP_IF_FALSE', cond_res, None, label_end))
         
-        # Corpo do laço
         self.visit(node.bloco)
         
-        # Volta ao início
         self.instructions.append(('JUMP', None, None, label_start))
-        
-        # Fim do laço
         self.instructions.append(('LABEL', label_end, None, None))
         return None
 
