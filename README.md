@@ -1,38 +1,28 @@
 # Compilador Didático em Python
 
-Este projeto documenta o desenvolvimento de um compilador completo para uma linguagem de programação simples, utilizando apenas Python e suas bibliotecas padrão. O objetivo é aplicar os conceitos teóricos de compiladores de forma prática.
+Este projeto consiste no desenvolvimento de um compilador completo para uma linguagem de programação imperativa simples, utilizando exclusivamente Python e suas bibliotecas padrão. O projeto foi construído seguindo rigorosos princípios de engenharia de software e teoria de linguagens formais.
 
-## Estrutura do Projeto
+## 🚀 Estrutura do Projeto
 
 ```
 /
-|-- lexer.py            # Fase 1: Analisador Léxico
-|-- parser_.py          # Fase 2: Analisador Sintático e AST
+|-- lexer.py            # Fase 1: Analisador Léxico (Scanner)
+|-- parser_.py          # Fase 2: Analisador Sintático (Parser) e AST
 |-- semantic.py         # Fase 3: Analisador Semântico e Tabela de Símbolos
-|-- optimizer.py        # Fase de Bônus: Otimizador de AST (Constant Folding)
+|-- optimizer.py        # Bônus: Otimizador de AST (Constant Folding)
 |-- ir_generator.py     # Fase 4: Gerador de Código Intermediário (TAC)
 |-- code_generator.py   # Fase 5: Gerador de Bytecode
-|-- vm.py               # Fase 5: Máquina Virtual baseada em pilha
-|-- test_runner.py      # Executor de testes automatizados
-|-- tests/              # Diretório com os casos de teste (56 testes)
-|   |-- test_lexer.py
-|   |-- test_parser.py
-|   |-- test_semantic.py
-|   |-- test_optimizer.py
-|   |-- test_ir_generator.py
-|   |-- test_vm.py
-|   |-- test_regressive.py
-|   |-- test_stress.py
-|   |-- test_leetcode.py
-|-- .gitignore          # Arquivos ignorados pelo Git
-|-- requirerimentos-compilador.pdf # O documento original de requisitos
-|-- README.md           # Este arquivo
-|-- PROJECT_STATUS.md   # Checkpoint final do projeto
+|-- vm.py               # Fase 5: Máquina Virtual (Stack Machine)
+|-- test_runner.py      # Executor central de testes
+|-- DOCS.md             # Documentação técnica detalhada
+|-- tests/              # Suíte de testes (61 casos automatizados)
+|-- .gitignore          # Configurações de repositório
+|-- README.md           # Guia de apresentação e visão geral
 ```
 
-## Como Executar os Testes
+## 🛠️ Como Executar os Testes
 
-Para validar a implementação a qualquer momento, execute o `test_runner` a partir do diretório raiz. Ele descobrirá e rodará todos os testes unitários, regressivos e de estresse.
+Para validar a integridade de todas as fases do compilador, execute:
 
 ```sh
 python3 test_runner.py
@@ -40,30 +30,50 @@ python3 test_runner.py
 
 ---
 
-## Progresso Atual
+## 📖 Guia de Apresentação (Para os Integrantes)
 
-Adotamos uma metodologia de Desenvolvimento Orientado a Testes (TDD), garantindo que cada funcionalidade seja validada antes de prosseguirmos.
+Este guia foi preparado para ajudar a equipe a explicar o funcionamento do compilador de forma didática durante a apresentação do projeto.
 
-### ✅ Fase 1: Análise Léxica (Concluída)
-Suporte a palavras-chave, operadores, literais e comentários.
+### 1. O que é este Compilador?
+É um sistema que traduz uma linguagem de alto nível (com `if`, `while`, `int`) para uma linguagem de baixíssimo nível (Bytecode) que roda em nossa própria Máquina Virtual. Ele não é apenas um interpretador; ele passa por todas as fases clássicas de compilação.
 
-### ✅ Fase 2: Análise Sintática (Concluída)
-Construção de AST para expressões complexas e estruturas de controle (`if`, `while`, `print`, `read`).
+### 2. O Fluxo de Dados (A "Pergunta de Ouro")
+**Pergunta:** "O que acontece quando eu clico em 'Compilar'?"
+**Resposta:** 
+1. O **Lexer** quebra o texto em tokens.
+2. O **Parser** organiza os tokens em uma árvore (AST).
+3. O **Semântico** checa se você não está somando `int` com `bool` ou usando variáveis inexistentes.
+4. O **Otimizador** faz as contas constantes (ex: `2+2` vira `4`) para economizar tempo depois.
+5. O **IR Generator** transforma a árvore em uma lista plana de instruções (TAC).
+6. O **Code Generator** transforma essa lista em números e códigos que a VM entende (Bytecode).
+7. A **VM** executa esse código usando uma pilha.
 
-### ✅ Fase 3: Análise Semântica (Concluída)
-Gerenciamento de escopos e Verificação de Tipos (Type Checking).
+### 3. Perguntas Técnicas Prováveis (FAQ)
 
-### ✅ Fase de Bônus: Otimização (Concluída)
-Implementação de **Constant Folding**. O compilador simplifica expressões constantes (ex: `2 + 2` vira `4`) em tempo de compilação, gerando um código mais eficiente para a VM.
-
-### ✅ Fase 4: Geração de Código Intermediário (Concluída)
-Tradução da AST para Código de Três Endereços (TAC) com gerenciamento de temporários e labels.
-
-### ✅ Fase 5: Geração de Código Final e Execução (Concluída)
-Tradução para Bytecode customizado e execução em uma Máquina Virtual (VM) robusta.
+*   **P: Por que usar o Padrão Visitor?**
+    *   **R:** Para manter o código limpo. Os nós da nossa Árvore (AST) só guardam dados. Toda a "inteligência" (Semântica, IR, Otimização) fica em classes separadas. Isso facilita adicionar novas funcionalidades sem mexer na estrutura da árvore.
+*   **P: O que é TAC (Código de Três Endereços)?**
+    *   **R:** É uma linguagem intermediária simplificada. Cada linha tem no máximo 3 endereços (dois operandos e um destino). Ex: `t1 = a + b`. Isso facilita muito a vida do gerador de código final.
+*   **P: Como a VM funciona sem registradores?**
+    *   **R:** Ela é uma **Máquina de Pilha** (Stack Machine). Em vez de dizer "coloque no registrador EAX", nós dizemos "coloque na pilha". Operações como `ADD` retiram os dois últimos valores da pilha e colocam o resultado de volta. É o mesmo modelo usado pelo Java (JVM) e Python.
+*   **P: Como vocês lidaram com saltos (Jumps) no `if` e `while`?**
+    *   **R:** Usamos uma técnica de **duas passagens**. Primeiro geramos o código e marcamos onde estão os "Labels". Na segunda passagem, voltamos substituindo o nome do Label pelo número exato da linha para onde a VM deve pular.
 
 ---
 
-## Conclusão do Projeto
+## 📝 Documentação Detalhada (Módulos)
 
-O projeto superou 100% dos requisitos originais, incluindo o bônus de otimização e algoritmos complexos (Fibonacci, Bubble Sort), com um total de **56 testes automatizados** garantindo a integridade do sistema.
+Para uma análise profunda de cada classe, método e complexidade Big-O de cada etapa, consulte o arquivo **[DOCS.md](./DOCS.md)**.
+
+### Resumo das Fases Concluídas:
+-   **✅ Análise Léxica:** Reconhecimento completo de tokens e tratamento de erros de linha/coluna.
+-   **✅ Análise Sintática:** Construção de AST com precedência de operadores e estruturas complexas.
+-   **✅ Análise Semântica:** Tabela de símbolos com suporte a múltiplos escopos e *Type Checking*.
+-   **✅ Otimização:** Implementação de *Constant Folding*.
+-   **✅ IR & Code Gen:** Geração de TAC e Bytecode resolvida.
+-   **✅ Máquina Virtual:** Execução funcional com suporte a `read` e `print`.
+
+---
+
+## 🏁 Conclusão
+O projeto atingiu 100% dos requisitos obrigatórios e bônus, com **61 testes automatizados** garantindo que algoritmos como **Fibonacci**, **Fatorial** e **Bubble Sort** funcionem perfeitamente do código fonte à execução.
