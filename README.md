@@ -4,7 +4,7 @@
 
 # Compilador ASLAN
 
-Este projeto consiste no desenvolvimento de um compilador completo para uma linguagem de programação imperativa simples, utilizando exclusivamente Python e suas bibliotecas padrão. O projeto foi construído seguindo rigorosos princípios de engenharia de software e teoria de linguagens formais.
+Este projeto consiste no desenvolvimento de um compilador completo para uma linguagem de programação imperativa simples, utilizando exclusivamente Python e suas bibliotecas padrão.
 
 ## 🚀 Estrutura do Projeto
 
