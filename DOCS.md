@@ -64,6 +64,10 @@ O parser foi construído com base na seguinte gramática livre de contexto:
 *   **Como funciona (Método `tokenize`):** Utiliza a biblioteca `re` do Python. Constrói uma Mega-Regex usando *Named Capture Groups* (`(?P<TIPO>regex)`). O método usa `match.end()` para fatiar o código fonte iterativamente.
 *   **Tipos Tratados:** `INT`, `BOOL`, `STRING` (tipos); `IF`, `ELSE`, `WHILE`, `PRINT`, `READ` (palavras-chave); `MAIS`, `MENOS`, `MULT`, `DIV`, `IGUAL_COMP`, `DIFERENTE`, `MAIOR`, `MENOR`, `MAIOR_IGUAL`, `MENOR_IGUAL` (operadores); numéricos inteiros, booleanos e strings delimitadas por aspas duplas.
 
+#### Lexers Temáticos Opcionais (`lexer_narnia.py` e `lexer_lotr.py`)
+A arquitetura do compilador baseia-se fortemente em "Tipos de Token" (ex: `IF`, `INT`) em vez de strings estáticas. Essa abstração permitiu a criação de lexers alternativos onde apenas as expressões regulares (*RegEx*) das palavras-chave foram substituídas por termos temáticos.
+*   **Design Pattern:** O `parser_.py` consome os tokens baseados no `.type`. Assim, uma palavra como `nao_passara` (`lexer_lotr`) ou `pela_juba_do_leao` (`lexer_narnia`) é convertida no mesmo token genérico de tipo `IF`. Isso garante **Retrocompatibilidade Absoluta**: toda a complexidade da AST, Analisador Semântico e da Máquina Virtual não precisou sofrer nenhuma alteração estrutural para suportar essas novas "linguagens".
+
 ### 3.2. Analisador Sintático (`src/parser_.py`)
 *   **Responsabilidade:** Implementar um Parser Descendente Recursivo preditivo (LL(1)) para transformar `List[Token]` em uma AST.
 *   **Classes de Nós (ASTNodes):** 
