@@ -167,5 +167,4 @@ VirtualMachine(bytecode).run()
 | **Optimizer**| Depth-First Search | $O(N_{ast})$ | $O(N_{ast})$ | Modifica a AST in-place. Otimização linear muito rápida. |
 | **IR Gen.** | Linearização AST | $O(N_{ast})$ | $O(I_{tac})$ | Percorre a AST uma vez, gerando $I_{tac}$ instruções na memória. |
 | **Code Gen.**| Array de Tuplas (2-Pass)| $O(I_{tac})$ | $O(I_{byte})$ | A primeira e segunda passagem são estritamente lineares. Uso de dict de labels torna a Passagem 2 $O(1)$ por resolução de endereço. |
-| **VM Execution**| Loop Fetch-Decode | $O(E)$ | $O(V_{exec} + P)$ | Depende do Algoritmo compilado ($E$ iterações). Uso de Pilha ($P$) e Memória local ($V_{exec}$). Eficiente em $O(1)$ por ciclo de clock virtual, o overhead vem do loop da linguagem host (Python). |
-r ciclo de clock virtual, o overhead vem do loop da linguagem host (Python). |
+| **VM Execution**| Loop Fetch-Decode | $O(E)$ | $O(V_{exec} + P)$ | Depende do Algoritmo compilado ($E$ iterações). Uso de Pilha ($P$) e Memória local ($V_{exec}$). Eficiente em $O(1)$ por ciclo de clock virtual, o overhead vem do loop da
